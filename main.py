@@ -131,9 +131,6 @@ app = FastAPI(title="Molecule WorkFlow Pro API", lifespan=lifespan)
 # CORS middleware - Allow your production domain
 origins = [
     "https://reporting.webconferencesolutions.com",
-    "http://localhost:3000",
-    "http://localhost:8080",
-    "http://127.0.0.1:8001",
     "*"  # Allow all for development - remove in production
 ]
 
