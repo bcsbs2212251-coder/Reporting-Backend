@@ -22,6 +22,14 @@ async def create_mongodb_client():
     if not uri:
         print("[ERROR] MONGODB_URI not found in environment variables")
         return None
+    
+    # Ensure URI has database name
+    if uri.endswith("/"):
+        uri = uri + "molecule_workflow?retryWrites=true&w=majority"
+        print(f"[INFO] Added database name to URI")
+    elif "?" not in uri and not uri.split("/")[-1]:
+        uri = uri + "molecule_workflow?retryWrites=true&w=majority"
+        print(f"[INFO] Completed MongoDB URI with database and parameters")
 
     # Try multiple connection strategies
     strategies = [
