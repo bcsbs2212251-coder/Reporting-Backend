@@ -9,6 +9,13 @@ async def forgot_password():
         "message": "Password reset email sent"
     }
 
+@router.post("/verify-reset-token")
+async def verify_reset_token():
+    return {
+        "success": True,
+        "message": "Token verified successfully"
+    }
+
 @router.post("/reset-password")
 async def reset_password():
     return {

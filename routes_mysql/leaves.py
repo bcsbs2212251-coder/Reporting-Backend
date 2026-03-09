@@ -133,3 +133,28 @@ def update_leave(leave_id: int, leave_update: LeaveUpdate, db: Session = Depends
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/leaves/stats/summary")
+def get_leave_stats(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    try:
+        user_role = current_user.get("role")
+        
+        if user_role != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+        
+        total_leaves = db.query(Leave).count()
+        pending_leaves = db.query(Leave).filter(Leave.status == "pending").count()
+        approved_leaves = db.query(Leave).filter(Leave.status == "approved").count()
+        rejected_leaves = db.query(Leave).filter(Leave.status == "rejected").count()
+        
+        return {
+            "success": True,
+            "data": {
+                "total": total_leaves,
+                "pending": pending_leaves,
+                "approved": approved_leaves,
+                "rejected": rejected_leaves
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
