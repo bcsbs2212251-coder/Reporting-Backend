@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
-from models_mysql.user import User, UserCreate, UserLogin, UserResponse
+from models_mysql.user import User, UserCreate, UserLogin, UserResponse, UserRole, UserStatus
 from utils.auth import get_password_hash, verify_password, create_access_token
 from utils.mysql_db import get_db
 from datetime import datetime
@@ -23,8 +23,8 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
             full_name=user.full_name,
             email=user.email,
             password=get_password_hash(user.password),
-            role=user.role,
-            status="active"
+            role=UserRole(user.role),  # Convert string to enum
+            status=UserStatus.active
         )
         
         db.add(db_user)
