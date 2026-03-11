@@ -8,11 +8,6 @@ import enum
 
 from utils.mysql_db import Base
 
-class ReportPriority(str, enum.Enum):
-    low = "low"
-    medium = "medium"
-    high = "high"
-
 class ReportStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"
@@ -25,10 +20,9 @@ class Report(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user_name = Column(String(255), nullable=False)
-    title = Column(String(500), nullable=False)
+    project_name = Column(String(500), nullable=False)
+    project_code = Column(String(100), nullable=True)
     description = Column(Text, nullable=False)
-    priority = Column(Enum(ReportPriority), default=ReportPriority.medium)
-    category = Column(String(100), default="general")
     status = Column(Enum(ReportStatus), default=ReportStatus.pending)
     attachments = Column(JSON, default=list)
     voice_notes = Column(JSON, default=list)
@@ -37,21 +31,19 @@ class Report(Base):
 
 # Pydantic models for API
 class ReportBase(BaseModel):
-    title: str
+    project_name: str
+    project_code: Optional[str] = None
     description: str
-    priority: str = "medium"
-    category: str = "general"
 
 class ReportCreate(ReportBase):
     attachments: Optional[List[str]] = []
     voice_notes: Optional[List[str]] = []
 
 class ReportUpdate(BaseModel):
-    title: Optional[str] = None
+    project_name: Optional[str] = None
+    project_code: Optional[str] = None
     description: Optional[str] = None
-    priority: Optional[str] = None
     status: Optional[str] = None
-    category: Optional[str] = None
 
 class ReportResponse(ReportBase):
     id: int

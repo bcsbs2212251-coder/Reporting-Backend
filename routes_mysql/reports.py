@@ -28,10 +28,9 @@ def create_report(report: ReportCreate, db: Session = Depends(get_db), current_u
         db_report = Report(
             user_id=user_id,
             user_name=user.full_name,
-            title=report.title,
+            project_name=report.project_name,
+            project_code=report.project_code,
             description=report.description,
-            priority=report.priority,
-            category=report.category,
             attachments=json.dumps(report.attachments) if report.attachments else json.dumps([]),
             voice_notes=json.dumps(report.voice_notes) if report.voice_notes else json.dumps([]),
             status="pending"
@@ -78,10 +77,9 @@ def get_reports(db: Session = Depends(get_db), current_user: dict = Depends(get_
                 "_id": str(report.id),
                 "user_id": str(report.user_id),
                 "user_name": report.user_name,
-                "title": report.title,
+                "project_name": report.project_name,
+                "project_code": report.project_code,
                 "description": report.description,
-                "priority": report.priority.value if hasattr(report.priority, 'value') else report.priority,
-                "category": report.category,
                 "status": report.status.value if hasattr(report.status, 'value') else report.status,
                 "attachments": json.loads(report.attachments) if isinstance(report.attachments, str) else report.attachments,
                 "voice_notes": json.loads(report.voice_notes) if isinstance(report.voice_notes, str) else report.voice_notes,
@@ -129,10 +127,9 @@ def get_report_by_id(report_id: int, db: Session = Depends(get_db), current_user
                 "_id": str(report.id),
                 "user_id": str(report.user_id),
                 "user_name": report.user_name,
-                "title": report.title,
+                "project_name": report.project_name,
+                "project_code": report.project_code,
                 "description": report.description,
-                "priority": report.priority.value if hasattr(report.priority, 'value') else report.priority,
-                "category": report.category,
                 "status": report.status.value if hasattr(report.status, 'value') else report.status,
                 "attachments": json.loads(report.attachments) if isinstance(report.attachments, str) else report.attachments,
                 "voice_notes": json.loads(report.voice_notes) if isinstance(report.voice_notes, str) else report.voice_notes,
@@ -169,16 +166,14 @@ def update_report(report_id: int, report_update: ReportUpdate, db: Session = Dep
             )
         
         # Update fields
-        if report_update.title:
-            report.title = report_update.title
+        if report_update.project_name:
+            report.project_name = report_update.project_name
+        if report_update.project_code:
+            report.project_code = report_update.project_code
         if report_update.description:
             report.description = report_update.description
-        if report_update.priority:
-            report.priority = report_update.priority
         if report_update.status:
             report.status = report_update.status
-        if report_update.category:
-            report.category = report_update.category
         
         db.commit()
         db.refresh(report)
